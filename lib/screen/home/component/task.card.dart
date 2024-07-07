@@ -10,14 +10,14 @@ class TaskCard extends StatelessWidget {
     required this.index,
     required this.title,
     required this.description,
-    required this.onDelete
+    this.onDelete
   });
 
   final int index;
   final String title;
   final String description;
 
-  final void Function(int index) onDelete;
+  final void Function(int index)? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,9 @@ class TaskCard extends StatelessWidget {
             IconButton(
               color: Colors.deepOrange,
               onPressed: () {
-                onDelete(index);
+                if (onDelete != null) {
+                  onDelete!(index);
+                }
               },
               icon: const Icon(Icons.delete)
             )

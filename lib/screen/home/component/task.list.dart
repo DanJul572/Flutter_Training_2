@@ -6,38 +6,40 @@ class TaskList extends StatelessWidget {
   const TaskList({
     super.key,
     required this.tasks,
-    required this.onDelete
+    this.onDelete,
   });
 
   final List<Task> tasks;
+  final void Function(int index)? onDelete;
 
-  final void Function(int index) onDelete;
+  void handleDelete(int index) {
+    if (onDelete != null) {
+      onDelete!(index);
+    }
+  }
 
-  Widget content () {
+  Widget content() {
     if (tasks.isEmpty) {
       return const Text('Task is empty');
     }
 
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        return TaskCard(
-          index: index,
-          title: tasks[index].title,
-          description: tasks[index].description,
-          onDelete: onDelete,
-        );
-      }
+    return Flexible( // Use Flexible here
+      child: ListView.builder(
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          return TaskCard(
+            index: index,
+            title: tasks[index].title,
+            description: tasks[index].description,
+            onDelete: handleDelete,
+          );
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: content(),
-      ),
-    );
+    return content();
   }
 }

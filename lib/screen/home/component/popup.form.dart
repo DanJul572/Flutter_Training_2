@@ -10,66 +10,102 @@ class PopupForm extends StatefulWidget {
 }
 
 class _PopupFormState extends State<PopupForm> {
-  // Controllers for text fields
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
+  bool _isLoading = false;
+
   @override
   void dispose() {
-    // Clean up controllers when widget is disposed
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
-    // Handle form submission here (e.g., save data, close dialog)
-    String title = _titleController.text;
-    String description = _descriptionController.text;
+    if (_titleController.text.isEmpty || _descriptionController.text.isEmpty) {
+      // Add a simple validation to check if fields are not empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All fields are required')),
+      );
+      return;
+    }
 
-    // You can process or store the title and description here
-    widget.onCreate(title, description);
+    setState(() {
+      _isLoading = true;
+    });
 
-    // Close the dialog
-    Navigator.of(context).pop();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _isLoading = false;
+      });
+
+      String title = _titleController.text;
+      String description = _descriptionController.text;
+
+      widget.onCreate(title, description);
+
+      Navigator.of(context).pop();
+    });
   }
 
   void _closeForm() {
     Navigator.of(context).pop();
   }
 
+  Widget _buildSaveButtonContent() {
+    if (_isLoading) {
+      return Container(
+        width: 20,
+        height: 20,
+        margin: const EdgeInsets.only(right: 15),
+        child: const CircularProgressIndicator(
+          color: Colors.deepOrange,
+        ),
+      );
+    }
+
+    return IconButton(
+      onPressed: _submitForm,
+      icon: const Icon(Icons.save),
+      color: Colors.deepOrange,
+    );
+  }
+
+  List<Widget> _buildFormFields() {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextField(
+          controller: _titleController,
+          decoration: const InputDecoration(labelText: 'Title'),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: TextField(
+          controller: _descriptionController,
+          decoration: const InputDecoration(labelText: 'Description'),
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> actions = [
-      IconButton(
-        onPressed: _submitForm,
-        icon: const Icon(Icons.save),
-        color: Colors.deepOrange,
-      ),
-      IconButton(
-        onPressed: _closeForm,
-        icon: const Icon(Icons.cancel),
-      ),
-    ];
-
-    final List<Widget> fields = [
-      TextField(
-        controller: _titleController,
-        decoration: const InputDecoration(labelText: 'Title'),
-      ),
-      TextField(
-        controller: _descriptionController,
-        decoration: const InputDecoration(labelText: 'Description'),
-      ),
-    ];
-
     return AlertDialog(
       title: const Text('Add Task'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        children: fields,
+        children: _buildFormFields(),
       ),
-      actions: actions,
+      actions: [
+        _buildSaveButtonContent(),
+        IconButton(
+          onPressed: _closeForm,
+          icon: const Icon(Icons.cancel),
+        ),
+      ],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(5)),
       ),

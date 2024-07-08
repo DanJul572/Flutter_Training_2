@@ -5,8 +5,26 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('About'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 150.0,
+            width: 150.0,
+            child: ClipOval(
+              child: Image.asset('assets/images/avatar.jpg'),
+            ),
+          ),
+          const SizedBox(
+              height: 20.0
+          ),
+          const Text(
+            'User Name',
+            style: TextStyle(color: Colors.deepOrange, fontSize: 25.0),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -77,6 +77,7 @@ class _PopupFormState extends State<PopupForm> {
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextField(
+          key: const Key('title_field'),
           controller: _titleController,
           decoration: const InputDecoration(labelText: 'Title'),
         ),
@@ -84,6 +85,7 @@ class _PopupFormState extends State<PopupForm> {
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: TextField(
+          key: const Key('description_field'),
           controller: _descriptionController,
           decoration: const InputDecoration(labelText: 'Description'),
         ),
